@@ -173,19 +173,7 @@ function animateOnScroll() {
     });
 }
 
-// Typing effect for hero title
-function typeWriter(element, text, speed = 100) {
-    let i = 0;
-    element.innerHTML = '';
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-    type();
-}
+
 
 // Floating animation for decorative elements
 function floatingAnimation() {
@@ -211,14 +199,87 @@ document.addEventListener('DOMContentLoaded', () => {
     new TestimonialsCarousel();
     floatingAnimation();
     animateOnScroll();
+    smoothScroll();
+    addHoverEffects();
     
-    // Hero title typing effect
-    const heroTitle = document.querySelector('.hero-title');
-    if (heroTitle) {
-        const originalText = heroTitle.textContent;
-        setTimeout(() => typeWriter(heroTitle, originalText, 80), 500);
-    }
+    // Add ripple effect to buttons
+    document.querySelectorAll('.cta-btn, .submit-btn, .visit-btn').forEach(btn => {
+        btn.addEventListener('click', createRipple);
+    });
+    
+
+    
+    // Stagger animation for cards
+    setTimeout(() => {
+        document.querySelectorAll('.expertise-card').forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    }, 1000);
 });
+
+// Button ripple effect
+function createRipple(event) {
+    const button = event.currentTarget;
+    const ripple = document.createElement('span');
+    const rect = button.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.clientX - rect.left - size / 2;
+    const y = event.clientY - rect.top - size / 2;
+    
+    ripple.style.cssText = `
+        position: absolute;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        background: rgba(255,255,255,0.3);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+    `;
+    
+    button.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+}
+
+// Smooth scroll for navigation
+function smoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+}
+
+// Enhanced hover effects
+function addHoverEffects() {
+    document.querySelectorAll('.portfolio-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px) scale(1.02)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+}
 
 // Scroll event listener
 window.addEventListener('scroll', animateOnScroll);
+
+// Add CSS for ripple animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to { transform: scale(4); opacity: 0; }
+    }
+    .cta-btn, .submit-btn { position: relative; overflow: hidden; }
+`;
+document.head.appendChild(style);
