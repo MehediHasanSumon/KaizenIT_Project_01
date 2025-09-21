@@ -132,7 +132,7 @@ function validateForm() {
     // Validate terms
     const terms = document.getElementById('terms').checked;
     if (!terms) {
-        alert('Please accept the terms');
+        showToast('Please accept the terms');
         isValid = false;
     }
     
@@ -144,14 +144,81 @@ function showError(fieldId, message) {
     document.getElementById(fieldId + 'Error').textContent = message;
 }
 
+function showToast(message, type = 'error') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type}`;
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
 document.getElementById('contactForm').addEventListener('submit', function(e) {
     e.preventDefault();
     if (validateForm()) {
-        alert('Form submitted successfully!');
+        showToast('Form submitted successfully!', 'success');
     }
 });
 
-// Initialize carousel when DOM is loaded
+// Scroll animations
+function animateOnScroll() {
+    const elements = document.querySelectorAll('.expertise-card, .portfolio-card, .testimonial-card, .form-group');
+    elements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 100) {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }
+    });
+}
+
+// Typing effect for hero title
+function typeWriter(element, text, speed = 100) {
+    let i = 0;
+    element.innerHTML = '';
+    function type() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        }
+    }
+    type();
+}
+
+// Floating animation for decorative elements
+function floatingAnimation() {
+    const decorations = document.querySelectorAll('.decoration');
+    decorations.forEach((el, index) => {
+        setInterval(() => {
+            el.style.transform = `translateY(${Math.sin(Date.now() * 0.001 + index) * 10}px)`;
+        }, 50);
+    });
+}
+
+// Initialize all animations
 document.addEventListener('DOMContentLoaded', () => {
+    // Set initial states for scroll animations
+    const elements = document.querySelectorAll('.expertise-card, .portfolio-card, .testimonial-card, .form-group');
+    elements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+    });
+    
+    // Start animations
     new TestimonialsCarousel();
+    floatingAnimation();
+    animateOnScroll();
+    
+    // Hero title typing effect
+    const heroTitle = document.querySelector('.hero-title');
+    if (heroTitle) {
+        const originalText = heroTitle.textContent;
+        setTimeout(() => typeWriter(heroTitle, originalText, 80), 500);
+    }
 });
+
+// Scroll event listener
+window.addEventListener('scroll', animateOnScroll);
