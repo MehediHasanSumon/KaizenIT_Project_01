@@ -76,6 +76,81 @@ class TestimonialsCarousel {
     }
 }
 
+// Custom form validation
+function validateForm() {
+    let isValid = true;
+    
+    // Clear previous errors
+    document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+    document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+    
+    // Validate first name
+    const firstName = document.getElementById('firstName').value.trim();
+    if (!firstName) {
+        showError('firstName', 'First name is required');
+        isValid = false;
+    }
+    
+    // Validate last name
+    const lastName = document.getElementById('lastName').value.trim();
+    if (!lastName) {
+        showError('lastName', 'Last name is required');
+        isValid = false;
+    }
+    
+    // Validate email
+    const email = document.getElementById('email').value.trim();
+    if (!email) {
+        showError('email', 'Email is required');
+        isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('email', 'Please enter a valid email');
+        isValid = false;
+    }
+    
+    // Validate phone
+    const phone = document.getElementById('phone').value.trim();
+    if (!phone) {
+        showError('phone', 'Phone number is required');
+        isValid = false;
+    }
+    
+    // Validate topic
+    const topic = document.getElementById('topic').value;
+    if (!topic) {
+        showError('topic', 'Please select a topic');
+        isValid = false;
+    }
+    
+    // Validate message
+    const message = document.getElementById('message').value.trim();
+    if (!message) {
+        showError('message', 'Message is required');
+        isValid = false;
+    }
+    
+    // Validate terms
+    const terms = document.getElementById('terms').checked;
+    if (!terms) {
+        alert('Please accept the terms');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+function showError(fieldId, message) {
+    document.getElementById(fieldId).classList.add('error');
+    document.getElementById(fieldId + 'Error').textContent = message;
+}
+
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (validateForm()) {
+        alert('Form submitted successfully!');
+    }
+});
+
 // Initialize carousel when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new TestimonialsCarousel();
